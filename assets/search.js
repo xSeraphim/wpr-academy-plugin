@@ -1,13 +1,17 @@
 (function($) {
+    function delay(callback, ms) {
+        var timer = 0;
+        return function() {
+          var context = this, args = arguments;
+          clearTimeout(timer);
+          timer = setTimeout(function () {
+            callback.apply(context, args);
+          }, ms || 0);
+        };
+      }
+    $('#wpr-filter select').on('change',doAjax);
     
-    $('#wpr-filter select').on('change', function(){
-        doAjax()
-    });
-    
-    $('#wpr-filter input').keyup(function(){
-        doAjax()
-
-    });
+    $('#wpr-filter input').keyup(delay(doAjax, 500));
     function doAjax(){
         var role = $('#wpr-filter select').val();
         var search_term = $('#wpr-filter input').val();
@@ -21,7 +25,6 @@
             type: 'GET', 
             data: data,
             success: function(response){
-                console.log(response);
                 $('#archive-engineers').empty();
                 if (response && response.length) {
                     for (var i = 0; i < response.length; i++) {
